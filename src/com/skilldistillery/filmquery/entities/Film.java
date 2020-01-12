@@ -7,6 +7,20 @@ public class Film {
 	public Film() {
 	}
 
+	private int id;
+	private String title;
+	private String description;
+	private int release_year;
+	private int language_id;
+	private int rental_duration;
+	private double rental_rate;
+	private int length;
+	private double replacement_cost;
+	private String rating;
+	private String special_features;
+	private List<Actor> actors;
+	private String language;
+
 	public Film(int id, String title, String description, int release_year, int language_id, int rental_duration,
 			double rental_rate, int length, double replacement_cost, String rating, String special_features) {
 		super();
@@ -21,22 +35,41 @@ public class Film {
 		this.replacement_cost = replacement_cost;
 		this.rating = rating;
 		this.special_features = special_features;
-		
+
 	}
 
-	private int id;
-	private String title;
-	private String description;
-	private int release_year;
-	private int language_id;
-	private int rental_duration;
-	private double rental_rate;
-	private int length;
-	private double replacement_cost;
-	private String rating;
-	private String special_features;
-	private List<Actor> actors;
-	
+
+	public String findLanguage(int filmId) {
+		if (filmId == 1) {
+			language = "English";
+		}
+		if (filmId == 2) {
+			language = "Italian";
+		}
+		if (filmId == 3) {
+			language = "Japanese";
+		}
+		if (filmId == 4) {
+			language = "Mandarin";
+		}
+		if (filmId == 5) {
+			language = "French";
+		}
+		if (filmId == 6) {
+			language = "German";
+		}
+
+		return language;
+
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 
 	public List<Actor> getActors() {
 		return actors;
@@ -134,18 +167,16 @@ public class Film {
 		this.special_features = special_features;
 	}
 
-	
+
 
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", " + (title != null ? "title=" + title + ", " : "")
-				+ (description != null ? "description=" + description + ", " : "") + "release_year=" + release_year
+		return "Film [id=" + id + ", title=" + title + ", description=" + description + ", release_year=" + release_year
 				+ ", language_id=" + language_id + ", rental_duration=" + rental_duration + ", rental_rate="
-				+ rental_rate + ", length=" + length + ", replacement_cost=" + replacement_cost + ", "
-				+ (rating != null ? "rating=" + rating + ", " : "")
-				+ (special_features != null ? "special_features=" + special_features + ", " : "")
-				+ (actors != null ? "actors=" + actors : "") + "]";
+				+ rental_rate + ", length=" + length + ", replacement_cost=" + replacement_cost + ", rating=" + rating
+				+ ", special_features=" + special_features + ", actors=" + actors + ", language=" + language + "]\n";
 	}
+
 
 	@Override
 	public int hashCode() {

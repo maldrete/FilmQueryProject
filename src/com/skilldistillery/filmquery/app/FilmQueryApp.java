@@ -1,5 +1,6 @@
 package com.skilldistillery.filmquery.app;
 
+import java.util.List;
 import java.util.Scanner;
 
 import com.skilldistillery.filmquery.database.DatabaseAccessor;
@@ -12,8 +13,8 @@ public class FilmQueryApp {
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
-		app.test();
-//  app.launch();
+		// app.test();
+		app.launch();
 
 	}
 
@@ -31,6 +32,24 @@ public class FilmQueryApp {
 	}
 
 	private void startUserInterface(Scanner input) {
+		menu();
+		int menuChoice = input.nextInt();
+
+		switch (menuChoice) {
+		case 1:
+			option1(input);
+			break;
+		case 2:
+			option2(input);
+			break;
+		case 3:
+			System.out.println("Goodbye");
+			break;
+
+		default:
+			System.out.println("Enter a valid number");
+			break;
+		}
 
 	}
 
@@ -38,6 +57,32 @@ public class FilmQueryApp {
 		System.out.println("1: Look up a film by its id");
 		System.out.println("2: Look up a film by a search keyword");
 		System.out.println("3: Exit the application");
+		System.out.println();
+		System.out.println("Enter a number");
+	}
+
+	public Film option1(Scanner input) {
+		System.out.println("Enter film id: ");
+		int filmId = input.nextInt();
+		Film film = db.findFilmById(filmId);
+		if (film != null) {
+			System.out.println(film);
+		} else {
+			System.out.println("Film id not found");
+		}
+		return film;
+	}
+	
+	public List<Film> option2(Scanner input) {
+		System.out.println("Enter film keyword: ");
+		String keyword = input.next();
+		List<Film> films = db.findFilmByKeyword(keyword);
+		if (films != null) {
+			System.out.println(films);
+		} else {
+			System.out.println("Film keyword not found");
+		}
+		return films;
 	}
 
 }

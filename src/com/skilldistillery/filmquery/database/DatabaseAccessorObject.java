@@ -12,7 +12,7 @@ import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
 
 public class DatabaseAccessorObject implements DatabaseAccessor {
-	private final String URL = "jdbc:mysql://localhost:3306/sdvid";
+	private final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
 	private String user = "student";
 	private String pass = "student";
 
@@ -26,22 +26,19 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 		try {
 			conn = DriverManager.getConnection(URL, user, pass);
-			sqltxt = "SELECT * FROM film WHERE id = ?";
+			sqltxt = "select * from film where film.id =?";
 			stmt = conn.prepareStatement(sqltxt);
 			stmt.setInt(1, filmId);
 			rs = stmt.executeQuery();
 
-			// Film(int id, String title, String description, int release_year, int
-			// language_id, int rental_duration,
-			// double rental_rate, int length, double replacement_cost, String rating,
-			// String special_features)
 			if (rs.next()) {
 				film = new Film(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
 						rs.getInt("release_year"), rs.getInt("language_id"), rs.getInt("rental_duration"),
 						rs.getInt("rental_rate"), rs.getInt("length"), rs.getDouble("replacement_cost"),
 						rs.getString("rating"), rs.getString("special_features"));
-				
-						film.setActors(findActorsByFilmId(film.getId()));
+
+				film.setActors(findActorsByFilmId(filmId));
+				film.setLanguage(film.findLanguage(rs.getInt(5)));
 
 			}
 			conn.close();
@@ -95,7 +92,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 		try {
 			conn = DriverManager.getConnection(URL, user, pass);
-			sqltxt = "SELECT * FROM actor JOIN film_actor ON actor.id = film_actor.actor.id WHERE film_id = ?";
+			sqltxt = "SELECT * FROM actor JOIN film_actor ON actor.id = film_actor.film_id WHERE film_id = ?";
 			stmt = conn.prepareStatement(sqltxt);
 			stmt.setInt(1, filmId);
 			rs = stmt.executeQuery();
@@ -121,25 +118,25 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
-		String sqltxt;
 		List<Film> films = new ArrayList<Film>();
 		Film film;
 
 		try {
 			conn = DriverManager.getConnection(URL, user, pass);
-			sqltxt = "SELECT * FROM film WHERE film_id = ?";
-			stmt = conn.prepareStatement(sqltxt);
-			stmt.setString(1, keyword);
+			String sql2 = "SELECT * from film WHERE title LIKE ? OR description LIKE ?";
+			stmt = conn.prepareStatement(sql2);
+			stmt.setString(1, "%"+keyword+"%");
+			stmt.setString(2, "%"+keyword+"%");
 			rs = stmt.executeQuery();
 
-			if (rs.next()) {
+			while (rs.next()) {
 				film = new Film(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
 						rs.getInt("release_year"), rs.getInt("language_id"), rs.getInt("rental_duration"),
-						rs.getInt("rental_rate"), rs.getInt("length"), rs.getDouble("replacement_cost"),
+						rs.getDouble("rental_rate"), rs.getInt("length"), rs.getDouble("replacement_cost"),
 						rs.getString("rating"), rs.getString("special_features"));
-
-				film.setActors(findActorsByFilmId(film.getId()));
-
+				
+				film.setActors(findActorsByFilmId(rs.getInt(1)));
+				film.setLanguage(film.findLanguage(rs.getInt(5)));
 				films.add(film);
 			}
 
